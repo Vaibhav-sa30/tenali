@@ -23,7 +23,6 @@
 
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import VoiceAssistant from './components/VoiceAssistant';
-import { motion } from 'framer-motion';
 import OnboardingTour from './components/OnboardingTour';
 
 window.React = React;
@@ -57,6 +56,7 @@ function useProgressSubmit(revealed, isCorrect, topic, questionId) {
   }, [revealed, isCorrect, topic, questionId]);
 }
 import Vachana from './vachana'
+import TransformerApp from './transformer'
 import './App.css'
 import InteractiveLcmHcfApp from './LcmHcfApp';
 import IdliVadaSambharApp from './IdliVadaSambharApp';
@@ -40416,6 +40416,20 @@ function App() {
     )
   }
 
+  // Route: /transformer → Transformer Adaptive Concept Graph
+  if (pathname === '/transformer' || pathname.startsWith('/transformer/')) {
+    return (
+      <>
+        <button className="theme-toggle" onClick={toggleTheme} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
+        <div className="app-shell">
+          <TransformerApp onBack={() => { window.location.href = '/' }} />
+        </div>
+      </>
+    )
+  }
+
   // Route: /supertables → 10-level progressive multiplication mastery
   if (pathname === '/supertables') {
     return (
@@ -41109,6 +41123,7 @@ function App() {
   // Map quiz mode keys to their component classes
   const modeMap = {
     vachana: Vachana,          // Vachana Mathematical Literacy Lab
+    transformer: TransformerApp, // Transformer Adaptive Concept Graph
     linearalgebra: LinearAlgebraApp, // Linear Algebra Module 1
     missionquiz: MissionQuizApp, // Mission-specific Linear Algebra Quiz
     'math-lab': MathLabHubApp,
@@ -41320,6 +41335,8 @@ function App() {
       </button>
       {mode === 'vachana' ? (
         <Vachana onBack={() => setMode(null)} />
+      ) : mode === 'transformer' ? (
+        <TransformerApp onBack={() => setMode(null)} />
       ) : (
         <div className="card">
           {renderContent()}
@@ -41348,6 +41365,7 @@ function Home({ onSelect, isGoalSelection = false, onBack }) {
     { key: 'custom', name: 'Custom Lesson', subtitle: 'Build your own mixed quiz', color: 'featured' },
     { key: 'gym', name: 'Gym', subtitle: 'Adaptive workout across all 7 gym puzzles', color: 'featured' },
     { key: 'vachana', name: 'Vachana', subtitle: 'Mathematical Literacy Lab', color: 'featured' },
+    { key: 'transformer', name: 'Transformer Lab', subtitle: 'Adaptive AI Prerequisite Graph', color: 'featured' },
   ]
   // Visual Learning Universe lives only in the hamburger menu
   const mathLabEntry = { key: 'math-lab', name: '🔬 Visual Learning Universe', subtitle: 'Visual, Mensuration & Addition labs', color: 'orange' }
@@ -41422,6 +41440,7 @@ function Home({ onSelect, isGoalSelection = false, onBack }) {
     { key: 'surds', name: 'Surds', subtitle: 'Simplify, add, multiply, rationalise', color: 'green' },
     { key: 'tatsavit', name: 'Tatsavit', subtitle: 'Algebra simplification drill', color: 'blue' },
     { key: 'transform', name: 'Transformations', subtitle: 'Reflect, rotate, translate, enlarge', color: 'purple' },
+    { key: 'transformer', name: 'Transformer Lab', subtitle: 'Adaptive AI Prerequisite Graph', color: 'orange' },
     { key: 'triangles', name: 'Triangles', subtitle: 'Angle sum, isosceles, exterior', color: 'blue' },
     { key: 'trig', name: 'Trigonometry', subtitle: 'SOH-CAH-TOA, sine/cosine rule', color: 'green' },
     { key: 'variation', name: 'Variation', subtitle: 'Direct & inverse proportion', color: 'purple' },
@@ -47679,9 +47698,6 @@ function makeQuizApp({ title, subtitle, apiPath, diffLabels, placeholders, tip, 
             {tip && <p style={{ fontSize: '0.85rem', color: '#A89C93', marginBottom: '16px' }}>{tip}</p>}
 
             <div style={{ marginBottom: '24px' }}>
-              <h3 style={{ color: '#F4F1ED', fontSize: '0.9rem', margin: '0 0 16px', fontFamily: 'Inter, sans-serif', fontWeight: 700 }}>
-                Select Difficulty:
-              </h3>
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '12px' }}>
                 {diffs.map(d => (
                   <button key={d} onClick={() => { setDifficulty(d); setIsAdaptive(false); }} style={{
